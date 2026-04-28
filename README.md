@@ -1,4 +1,29 @@
-# Dataset Breakdown
+# Courtside Inference: NBA Game Predictor
+
+## 🚀 Running the Machine Learning Pipeline
+
+### Prerequisites
+1. **The Database:** You **must** have the full `nba.sqlite` file downloaded from Kaggle placed in the root directory. The empty shell file will crash the code.
+2. **Virtual Environment:** Ensure you are running a virtual environment to avoid package conflicts.
+3. **Dependencies:** Install the required ML libraries:
+   `pip install pandas scikit-learn lightgbm`
+   *(Mac users: If LightGBM throws an OpenMP error, run `brew install libomp`)*
+
+### Executing the Code
+Run the driver script from the terminal:
+`python main.py`
+
+This will automatically:
+1. Extract games from 2010 onwards.
+2. Run Feature Engineering (calculating rolling averages, handling missing data, and stripping post-game stats to prevent data leakage).
+3. Train and evaluate the Baseline L1 Logistic Regression (LASSO).
+4. Train and evaluate the Advanced LightGBM Classifier.
+5. Output Accuracy, Log-Loss, and the top features selected by the baseline.
+
+---
+
+## Dataset Breakdown
+
 ### common_player_info
     Contains player's common info(birthdays, college info, etc.)
     Irrelevant to our analysis
@@ -42,4 +67,4 @@
 ### team_info_common
     Simply an empty data sheet. 
 
-Summary: only the game, inactive_players, officials, other_stats will be used to our analysis. 
+Summary: only the game, inactive_players, officials, other_stats will be used to our analysis.
