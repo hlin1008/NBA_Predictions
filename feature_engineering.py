@@ -16,13 +16,15 @@ def engineer_features(df: pd.DataFrame) -> pd.DataFrame:
         df = df.sort_values(by='game_date').reset_index(drop=True)
 
     # 2. Simulate Fatigue: The "Back-to-Back" feature
-    # If a team played yesterday, they are likely fatigued.
-    # Note: This is a simplified proxy. We will calculate the days since the last game.
-    # (Assuming we have a 'team_id' and 'game_date' in the final merged data)
-    
-    # Placeholder logic (will adjust once we see Hanks's exact columns):
-    # df['days_rest_home'] = df.groupby('team_id_home')['game_date'].diff().dt.days
-    # df['home_back_to_back'] = (df['days_rest_home'] <= 1).astype(int)
+    if 'game_date' in df.columns and 'team_id_home' in df.columns:
+        # Calculate days since the last game for the home team
+        df['days_rest_home'] = df.groupby('team_id_home')['game_date'].diff().dt.days
+        
+        # If rest is 1 day or less, they are playing back-to-back
+        df['home_back_to_back'] = (df['days_rest_home'] <= 1).astype(int)
+        
+        # Fill the first game of the season with a standard 5 days of rest
+        df['days_rest_home'] = df['days_rest_home'].fillna(5)
 
     # 3. Handle Missing Values
     # Traditional ML methods (like Logistic Regression) cannot handle NaNs natively.
@@ -36,7 +38,7 @@ def engineer_features(df: pd.DataFrame) -> pd.DataFrame:
         df['target_win'] = df['wl_home'].apply(lambda x: 1 if x == 'W' else 0)
 
     print("Feature Engineering Complete.")
-    
+
     # 5. Prevent Data Leakage
     # We must drop post-game stats. If the model knows how many points 
     # were scored, it's not predicting; it's just reading the score!
